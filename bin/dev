@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Rails 8 convention: bin/dev starts the dev process group.
+# Prefers overmind (better signal handling) over foreman.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+# Make sure docker services are up (Postgres, Mailpit) before processes start.
+if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  if [[ -f docker-compose.yml ]]; then
+    docker compose up -d >/dev/null 2>&1 || true
+  fi
+fi
+
+if command -v overmind >/dev/null 2>&1; then
+  exec overmind start -f Procfile.dev "$@"
+fi
+
+if command -v foreman >/dev/null 2>&1; then
+  exec foreman start -f Procfile.dev "$@"
+fi
+
+# Neither installed — try to install foreman as a last-resort.
+echo "Neither overmind nor foreman is installed."
+echo "Installing foreman now (gem install foreman)..."
+gem install foreman
+exec foreman start -f Procfile.dev "$@"

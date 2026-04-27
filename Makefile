@@ -6,6 +6,7 @@
         dev dev-services test test-backend test-frontend e2e \
         lint lint-backend lint-frontend lint-fix \
         typecheck security typegen pack-check check-all doctor \
+        seed-rich api-docs \
         log clean reset
 
 SHELL := /bin/bash
@@ -40,11 +41,22 @@ setup-frontend: ## pnpm install + playwright browsers
 	cd frontend && pnpm exec playwright install --with-deps chromium
 
 # ---------- dev ----------
-dev: dev-services ## Start docker services + Rails + Vite
-	@command -v overmind >/dev/null && overmind start -f Procfile.dev || foreman start -f Procfile.dev
+dev: ## Start docker services + Rails + Vite (delegates to bin/dev)
+	./bin/dev
 
 dev-services: ## Start docker-compose services (postgres, mailhog)
 	docker compose up -d
+
+# ---------- demo data ----------
+seed-rich: ## Replace seeds with a richer dataset (5 users, ~50 posts) for UI dev
+	cd backend && bin/rails db:seed:replant
+	cd backend && bin/rails dev:seed_rich
+
+# ---------- API docs ----------
+api-docs: ## Open the rswag Swagger UI in the default browser
+	@if command -v open >/dev/null 2>&1; then open http://localhost:3000/api-docs; \
+	elif command -v xdg-open >/dev/null 2>&1; then xdg-open http://localhost:3000/api-docs; \
+	else echo "Open http://localhost:3000/api-docs in a browser"; fi
 
 # ---------- test ----------
 test: ## Run all tests (writes .claude/.last-test-status for the Claude statusline)
@@ -125,5 +137,8 @@ clean: ## Remove build artifacts
 	cd backend && rm -rf tmp/cache log/*.log coverage/
 	cd frontend && rm -rf dist/ coverage/ playwright-report/ test-results/
 
-reset: ## Drop & recreate database (DESTRUCTIVE)
+reset: ## Drop & recreate database (DESTRUCTIVE — asks for confirmation)
+	@printf "⚠️  This will DROP the database. All data will be lost.\nType 'yes' to continue: "; \
+		read ans; \
+		[ "$$ans" = "yes" ] || { echo "Aborted."; exit 1; }
 	cd backend && bin/rails db:drop db:create db:migrate db:seed
