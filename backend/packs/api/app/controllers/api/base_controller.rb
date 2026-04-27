@@ -3,7 +3,8 @@ module Api
     private
 
     def render_serialized(resource, serializer:, status: :ok, meta: nil)
-      payload = serializer.new(resource, meta: meta).serializable_hash
+      payload = serializer.new(resource).serializable_hash
+      payload = { data: payload, meta: meta } if meta
       render json: payload, status: status
     end
 

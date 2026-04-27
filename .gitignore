@@ -55,6 +55,9 @@ frontend/storybook-static/
 # Claude
 .claude/.local/
 .claude/cache/
+.claude/settings.local.json
+.mcp.env
+.playwright-mcp/
 
 # Kamal
 .kamal/secrets

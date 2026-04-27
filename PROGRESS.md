@@ -8,6 +8,7 @@ Index of all `.claude/logs/` entries — read top-down. Newest first.
 
 ## 2026-04
 
+- 2026-04-27 — [Stage 11: First-run fixes & live E2E](.claude/logs/2026-04-27-stage-11-first-run-fixes.md) — Bootstrap, Zeitwerk inflector, Alba 3, Pagy 9, Docker mirrors, camelCase serializers; full UI happy path verified via Playwright MCP.
 - 2026-04-28 — [Stage 10: Automation](.claude/logs/2026-04-28-stage-10-automation.md) — CLAUDE.md как контракт, .mcp.json (context7+magic-mcp+playwright), 8 slash-команд, скаффолдинг-скрипты, усиленные хуки, bootstrap.sh, output style.
 - 2026-04-28 — [Stage 9: Final summary](.claude/logs/2026-04-28-stage-9-final-summary.md) — Starter ready: 239 files, all 9 stages done in one session.
 - 2026-04-28 — [Stage 8: DevOps](.claude/logs/2026-04-28-stage-8-devops.md) — 3 GitHub Actions workflows, Dependabot, Kamal 2 template, backend Dockerfile.

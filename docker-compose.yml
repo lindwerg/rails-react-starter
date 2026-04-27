@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-app_development}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -16,12 +16,18 @@ services:
       timeout: 5s
       retries: 5
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: app_mailhog
+  # Mailpit — actively-maintained successor to Mailhog. Same ports.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: app_mailpit
+    restart: unless-stopped
     ports:
       - "1025:1025" # SMTP
       - "8025:8025" # Web UI
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
 volumes:
   postgres_data:

@@ -34,7 +34,7 @@ gem "rswag-ui"
 
 # === Architecture ===
 gem "packwerk", "~> 3.2"
-gem "packwerk-extensions", "~> 0.6"
+gem "packwerk-extensions", "~> 0.3"
 
 # === Observability ===
 gem "lograge"
