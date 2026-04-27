@@ -2,10 +2,10 @@
 # Run `make help` to see what's available.
 
 .DEFAULT_GOAL := help
-.PHONY: help bootstrap first-run setup setup-tools setup-backend setup-frontend \
+.PHONY: help bootstrap first-run init setup setup-tools setup-backend setup-frontend \
         dev dev-services test test-backend test-frontend e2e \
         lint lint-backend lint-frontend lint-fix \
-        typecheck security typegen pack-check check-all doctor \
+        typecheck security typegen pack-check check-all doctor heal ports \
         seed-rich api-docs \
         log clean reset
 
@@ -21,6 +21,9 @@ bootstrap: ## One-shot setup from a fresh clone (alias: first-run)
 	./bootstrap.sh
 
 first-run: bootstrap ## Alias for bootstrap
+
+init: ## Bootstrap a NEW project from this template (renames placeholders → bootstrap)
+	./bin/init
 
 # ---------- setup ----------
 setup: setup-tools setup-backend setup-frontend ## Install everything (tools, gems, npm, db, hooks)
@@ -116,6 +119,27 @@ check-all: test lint typecheck security pack-check ## Run every quality gate seq
 # ---------- doctor: diagnose broken-first-run pain ----------
 doctor: ## Diagnose mise/Docker/ports/env/hooks (run when something feels off)
 	@.claude/scripts/doctor.sh
+
+# ---------- heal: idempotent auto-recovery of known broken states ----------
+heal: ## Auto-fix common breakage: ports, mise, gems, npm, db, hooks, docker
+	@./bin/allocate-ports
+	@command -v mise >/dev/null && mise install || true
+	@command -v corepack >/dev/null && corepack enable && corepack prepare pnpm@9.15.0 --activate || true
+	@if command -v docker >/dev/null && ! docker info >/dev/null 2>&1; then \
+		if [ "$$(uname)" = "Darwin" ]; then echo "→ starting Docker Desktop"; open -a Docker; \
+			for i in 1 2 3 4 5 6 7 8 9 10 11 12; do sleep 5; docker info >/dev/null 2>&1 && break; done; \
+		fi; \
+	fi
+	@docker info >/dev/null 2>&1 && docker compose up -d || echo "⚠ Docker still unavailable — skipping compose up"
+	cd backend && bundle install
+	cd frontend && pnpm install --prefer-offline || cd frontend && pnpm install
+	cd backend && bin/rails db:prepare
+	@command -v lefthook >/dev/null && lefthook install || true
+	@echo "✅ heal complete. Try 'make dev'."
+
+# ---------- ports: show currently-allocated host ports ----------
+ports: ## Show currently-allocated dev ports (.ports.env)
+	@./bin/allocate-ports --print
 
 # ---------- types from OpenAPI ----------
 typegen: ## Regenerate frontend types from backend OpenAPI

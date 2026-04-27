@@ -67,6 +67,7 @@ fi
 if command -v jq >/dev/null 2>&1; then ok "jq installed (used by guard hooks)"; else bad "jq missing" "brew install jq (guard hooks rely on it)"; fi
 if command -v lefthook >/dev/null 2>&1; then ok "lefthook installed"; else warn "lefthook not on PATH" "brew install lefthook && lefthook install"; fi
 if command -v overmind >/dev/null 2>&1; then ok "overmind installed"; elif command -v foreman >/dev/null 2>&1; then ok "foreman installed (overmind not, that's OK)"; else warn "neither overmind nor foreman" "gem install foreman (or brew install overmind)"; fi
+if command -v gh >/dev/null 2>&1; then ok "gh CLI installed: $(gh --version | head -1)"; else warn "gh not installed" "brew install gh (used by 'gh repo create', PR review, etc.)"; fi
 
 # ── Docker ──────────────────────────────────────────────────────────────
 section "Docker"
@@ -76,10 +77,10 @@ if command -v docker >/dev/null 2>&1; then
     ok "docker daemon running"
     if docker compose version >/dev/null 2>&1; then ok "docker compose v2 available"; else bad "docker compose missing" "Update Docker Desktop"; fi
   else
-    bad "docker installed but daemon not running" "Open Docker Desktop, wait for green tray icon, retry"
+    bad "docker installed but daemon not running" "make heal  (will run 'open -a Docker' and wait), or start Docker Desktop manually"
   fi
 else
-  bad "docker not installed" "Install Docker Desktop: https://docker.com/products/docker-desktop"
+  bad "docker not installed" "brew install --cask docker  (or run 'make heal' which auto-installs)"
 fi
 
 # ── Ports ───────────────────────────────────────────────────────────────
@@ -99,11 +100,20 @@ check_port() {
   fi
 }
 
-check_port 3000 "Rails"
-check_port 5173 "Vite"
-check_port 5433 "Postgres (host)"
-check_port 1025 "Mailpit SMTP"
-check_port 8025 "Mailpit UI"
+# Allocated host ports come from .ports.env (auto-assigned by bootstrap).
+if [[ -f .ports.env ]]; then
+  ok ".ports.env present"
+  # shellcheck disable=SC1091
+  set -a; . ./.ports.env; set +a
+else
+  warn ".ports.env not generated yet" "Run: bin/allocate-ports  (or just ./bootstrap.sh)"
+fi
+
+check_port "${BACKEND_PORT:-3000}"      "Rails (BACKEND_PORT)"
+check_port "${FRONTEND_PORT:-5173}"     "Vite (FRONTEND_PORT)"
+check_port "${POSTGRES_PORT:-5433}"     "Postgres host (POSTGRES_PORT)"
+check_port "${MAILPIT_SMTP_PORT:-1025}" "Mailpit SMTP"
+check_port "${MAILPIT_UI_PORT:-8025}"   "Mailpit UI"
 
 # ── Env files ───────────────────────────────────────────────────────────
 section "Env files"
