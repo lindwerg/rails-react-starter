@@ -1,12 +1,17 @@
-require "simplecov"
+# SimpleCov runs only when COVERAGE=true (or on CI). Loading it for every
+# `bin/rspec` / `--dry-run` makes the bootstrap sanity-check fail with
+# "coverage too low" on an empty run, which is just noise — gate it.
+if ENV["COVERAGE"] == "true" || ENV["CI"]
+  require "simplecov"
 
-SimpleCov.start "rails" do
-  add_filter "/bin/"
-  add_filter "/db/"
-  add_filter "/spec/"
-  add_filter "/config/"
-  enable_coverage :branch
-  minimum_coverage 90
+  SimpleCov.start "rails" do
+    add_filter "/bin/"
+    add_filter "/db/"
+    add_filter "/spec/"
+    add_filter "/config/"
+    enable_coverage :branch
+    minimum_coverage 90
+  end
 end
 
 RSpec.configure do |config|

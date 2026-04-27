@@ -55,8 +55,16 @@ elif [ -d .git ]; then
     case "${origin_url}" in *"${pat}"*) is_template_origin=1 ;; esac
   done
 
-  if [ "${is_template_origin}" -eq 1 ] || [ -z "${origin_url}" ] && git log -1 --pretty=%s 2>/dev/null | grep -qiE 'stage|starter|template'; then
-    echo "  → detaching from template git history"
+  should_detach=0
+  if [ "${is_template_origin}" -eq 1 ]; then
+    should_detach=1
+  elif [ -z "${origin_url}" ] && git log -1 --pretty=%s 2>/dev/null | grep -qiE 'stage|starter|template'; then
+    # No origin set, but commit history smells like the template — detach anyway.
+    should_detach=1
+  fi
+
+  if [ "${should_detach}" -eq 1 ]; then
+    echo "  → detaching from template git history (origin was: ${origin_url:-<none>})"
     rm -rf .git
     git init -q -b main
     echo "  → fresh git repo (branch: main)"
