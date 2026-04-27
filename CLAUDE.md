@@ -224,14 +224,30 @@ These live in `.claude/commands/`. Invoke as `/command-name [args]`.
 
 | Command | What it does |
 |---|---|
+| `/go` | **Start here if unsure.** Routes to the right command based on session state + a single question. |
 | `/check-all` | Run test + lint + typecheck + security + pack-check sequentially. Use before claiming done. |
 | `/tdd <description>` | Start a TDD cycle: writes failing test first, asks user to confirm Red, then implements. |
 | `/new-pack <name>` | Scaffold a new backend pack with package.yml, README, app/, spec/. |
 | `/new-slice <layer> <name>` | Scaffold a new FSD slice (entities/features/widgets/pages). |
 | `/new-log` | Scaffold a new log entry in `.claude/logs/` and stage it for editing. |
 | `/architecture-check` | Verify Packwerk + FSD compliance, show violations. |
+| `/doctor` | Diagnose broken-first-run problems (mise, Docker, ports, master.key, …). |
 | `/first-run` | Bootstrap from a fresh clone (mise install → setup → dev). |
 | `/sync-types` | Regenerate frontend types from backend OpenAPI. |
+
+### 3.1. Subagents
+
+Specialized agents at `.claude/agents/*.md`. Invoke via the `Agent` tool with `subagent_type: <name>`. Each agent has its own context window and tool allowlist — use them to keep the main context clean and to delegate work that benefits from a fresh perspective.
+
+| Agent | When to call it |
+|---|---|
+| `architect` | **Before** executing a non-trivial plan. Validates against Packwerk + FSD layer rules. Returns PASS or VIOLATIONS list. |
+| `tester` | TDD-Red phase. Generates RSpec/Vitest/Playwright files that fail for the right reason, then runs them to confirm Red. |
+| `reviewer` | After implementing, before committing. Reads `git diff --staged`, returns READY / CHANGES REQUESTED / BLOCKER with §5 violations highlighted. |
+| `migrator` | For any schema change. Generates the migration following strong_migrations rules and reports downtime risk. |
+| `debugger` | When a test is failing or a bug is unclear. Applies the scientific method, returns a diagnosis (NOT a fix to apply). |
+
+Delegating to a subagent is preferred over expanding the main thread when the task is well-scoped (one of the rows above). The main Claude pulls in the agent's report and acts on it.
 
 ---
 
@@ -316,10 +332,12 @@ Order of escalation:
 
 1. Re-read the relevant section of this file.
 2. Read the latest log in `.claude/logs/` — was this discussed?
-3. **`mcp__context7__query-docs`** for library questions.
-4. Read existing similar code (search for analogous pack/slice).
-5. Ask the user a focused question via `AskUserQuestion`. Multiple options preferred over a vague open-ended ask.
-6. If user is unavailable, propose a plan in plan-mode with the trade-offs visible.
+3. **Check `docs/TROUBLESHOOTING.md`** — known pain points for this stack are documented there.
+4. **`mcp__context7__query-docs`** for library questions.
+5. Read existing similar code (search for analogous pack/slice).
+6. **Try a subagent (§3.1)**: `debugger` for failing tests, `architect` for layer questions, `reviewer` for "is this code good?".
+7. Ask the user a focused question via `AskUserQuestion`. Multiple options preferred over a vague open-ended ask.
+8. If user is unavailable, propose a plan in plan-mode with the trade-offs visible.
 
 ---
 
