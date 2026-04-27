@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+# bin/rename-project — turn the template's `App` / `app_*` placeholders into
+# the new project's name. Idempotent: a sentinel file `.template-renamed`
+# blocks re-runs unless --force.
+#
+# Usage:
+#   bin/rename-project                # name = $(basename "$PWD")
+#   bin/rename-project my-shop        # explicit name (any case — normalised)
+#   bin/rename-project --force my-shop
+#   bin/rename-project --print        # show what *would* be renamed
+#
+# Replaces in known config files only — never blanket-greps the codebase.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${REPO_ROOT}"
+
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+NC=$'\033[0m'
+
+force=0
+print_only=0
+NAME=""
+
+for arg in "$@"; do
+  case "$arg" in
+    --force) force=1 ;;
+    --print|--dry-run) print_only=1 ;;
+    -h|--help) sed -n '2,/^$/p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --*) echo "Unknown flag: $arg" >&2; exit 2 ;;
+    *) NAME="$arg" ;;
+  esac
+done
+
+[ -z "${NAME}" ] && NAME="$(basename "${REPO_ROOT}")"
+
+# ──────────────────────────────────────────────────────────────────────
+# Normalise: support input like  "MyShop", "my-shop", "my_shop", "myshop"
+# ──────────────────────────────────────────────────────────────────────
+SNAKE="$(printf '%s' "${NAME}" \
+  | sed -E 's/([a-z0-9])([A-Z])/\1_\2/g' \
+  | tr '[:upper:]-' '[:lower:]_' \
+  | tr -cd '[:alnum:]_' \
+  | sed -E 's/^_+//; s/_+$//; s/__+/_/g')"
+
+# Reject names that don't make a valid Ruby/Postgres identifier.
+case "${SNAKE}" in
+  ''|[0-9]*) echo "rename-project: invalid name '${NAME}' (must be a-z0-9_, not starting with digit)" >&2; exit 2 ;;
+esac
+
+KEBAB="$(echo "${SNAKE}" | tr '_' '-')"
+PASCAL="$(echo "${SNAKE}" | awk -F_ '{for(i=1;i<=NF;i++) printf "%s", toupper(substr($i,1,1)) substr($i,2); print ""}')"
+
+if [ "${SNAKE}" = "app" ]; then
+  echo "rename-project: target name resolves to 'app' — that's the template default. Pick a different name."
+  exit 2
+fi
+
+# ──────────────────────────────────────────────────────────────────────
+# Sentinel check.
+# ──────────────────────────────────────────────────────────────────────
+SENTINEL="${REPO_ROOT}/.template-renamed"
+if [ -f "${SENTINEL}" ] && [ "${force}" -eq 0 ]; then
+  echo "  ✓ Already renamed (per ${SENTINEL}). Use --force to re-run."
+  echo "    Recorded name: $(cat "${SENTINEL}" | head -1)"
+  exit 0
+fi
+
+if [ "${print_only}" -eq 1 ]; then
+  printf "Would rename template placeholders to:\n"
+  printf "  PascalCase  %s   (Rails module)\n" "${PASCAL}"
+  printf "  snake_case  %s   (DB names, session key, POSTGRES_USER)\n" "${SNAKE}"
+  printf "  kebab-case  %s   (Kamal service, package.json name)\n" "${KEBAB}"
+  exit 0
+fi
+
+printf "${GREEN}▶${NC} Renaming template placeholders → %s (Pascal=%s snake=%s kebab=%s)\n" "${NAME}" "${PASCAL}" "${SNAKE}" "${KEBAB}"
+
+# Helper: in-place sed that works on both macOS (BSD) and Linux (GNU).
+_sed_i() { sed -i.bak "$@" && rm -f "${@: -1}.bak"; }
+
+# ──────────────────────────────────────────────────────────────────────
+# Each substitution block is wrapped in a guard so missing files don't
+# kill the script.
+# ──────────────────────────────────────────────────────────────────────
+touched=0
+edit() {
+  local file="$1"; shift
+  if [ ! -f "${file}" ]; then return; fi
+  for expr in "$@"; do
+    _sed_i -E "${expr}" "${file}"
+  done
+  touched=$((touched + 1))
+  printf "  ${GREEN}✓${NC} %s\n" "${file}"
+}
+
+# Rails app config
+edit backend/config/application.rb \
+  "s/^module App\$/module ${PASCAL}/" \
+  "s/_app_session/_${SNAKE}_session/g"
+
+# Rails DB config — only the canonical placeholders.
+edit backend/config/database.yml \
+  "s/app_(development|test|production)/${SNAKE}_\\1/g"
+
+# .env.example template
+edit .env.example \
+  "s/app_(development|test|production)/${SNAKE}_\\1/g"
+
+# .env (if user already created it before renaming — uncommon but possible)
+edit .env \
+  "s/app_(development|test|production)/${SNAKE}_\\1/g"
+
+# docker-compose.yml — container names + default DB.
+edit docker-compose.yml \
+  "s/container_name: app_postgres/container_name: ${SNAKE}_postgres/" \
+  "s/container_name: app_mailpit/container_name: ${SNAKE}_mailpit/" \
+  "s/-app_(development|test|production)/-${SNAKE}_\\1/g"
+
+# Kamal deploy.yml — service, image, postgres user/db, aliases.
+# IMPORTANT: do NOT touch `app_port:` (kamal config key, not the project name).
+edit config/deploy.yml \
+  "s/^service: app\$/service: ${KEBAB}/" \
+  "s|image: <YOUR_REGISTRY_USER>/app|image: <YOUR_REGISTRY_USER>/${KEBAB}|" \
+  "s/POSTGRES_USER: app\$/POSTGRES_USER: ${SNAKE}/" \
+  "s/POSTGRES_DB: app_production/POSTGRES_DB: ${SNAKE}_production/" \
+  "s/  ([a-z]+): +app exec/  \\1: ${KEBAB} exec/g" \
+  "s/  ([a-z]+): +app logs/  \\1: ${KEBAB} logs/g"
+
+# CI workflow.
+edit .github/workflows/ci-backend.yml \
+  "s/app_test/${SNAKE}_test/g"
+
+# Frontend package.json — only the top-level "name" key.
+if [ -f frontend/package.json ]; then
+  if command -v node >/dev/null 2>&1; then
+    node -e '
+      const fs = require("fs");
+      const f = "frontend/package.json";
+      const p = JSON.parse(fs.readFileSync(f, "utf8"));
+      p.name = process.argv[1] + "-frontend";
+      fs.writeFileSync(f, JSON.stringify(p, null, 2) + "\n");
+    ' "${KEBAB}"
+    printf "  ${GREEN}✓${NC} frontend/package.json (name=${KEBAB}-frontend)\n"
+    touched=$((touched + 1))
+  else
+    edit frontend/package.json \
+      "s/\"name\": \"frontend\"/\"name\": \"${KEBAB}-frontend\"/"
+  fi
+fi
+
+# ──────────────────────────────────────────────────────────────────────
+# Drop sentinel so re-runs are no-ops.
+# ──────────────────────────────────────────────────────────────────────
+{
+  echo "${KEBAB}"
+  echo "renamed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "snake=${SNAKE}"
+  echo "pascal=${PASCAL}"
+} > "${SENTINEL}"
+
+printf "\n${GREEN}✅${NC} Renamed %d files. Sentinel: %s\n" "${touched}" "${SENTINEL}"
+echo ""
+echo "Next:"
+echo "  ./bootstrap.sh         — install everything (idempotent)"
+echo "  git add -A && git commit -m 'chore: initialise project as ${NAME}'"

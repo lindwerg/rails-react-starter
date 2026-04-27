@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# bin/init — single-command first-run for a new project from this template.
+#
+# Steps:
+#   1. Detach from template's git history (only if origin still points at template).
+#   2. Run rename-project (idempotent — uses .template-renamed sentinel).
+#   3. Run bootstrap.sh (idempotent — installs everything, allocates ports).
+#   4. Make an initial commit if working tree is clean afterwards.
+#
+# Usage:
+#   bin/init                  # name = $(basename PWD)
+#   bin/init my-shop          # explicit name
+#   bin/init --no-detach      # keep existing git history (use on the template repo itself)
+#   bin/init --no-bootstrap   # rename only, skip bootstrap
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${REPO_ROOT}"
+
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+BOLD=$'\033[1m'
+NC=$'\033[0m'
+
+step() { printf "\n${GREEN}━━━ %s ━━━${NC}\n" "$1"; }
+
+NAME=""
+NO_DETACH=0
+NO_BOOTSTRAP=0
+TEMPLATE_REMOTE_PATTERNS=("mishanikhinkirill/odezhda" "github.com:mishanikhinkirill/odezhda")
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-detach)    NO_DETACH=1 ;;
+    --no-bootstrap) NO_BOOTSTRAP=1 ;;
+    -h|--help)      sed -n '2,/^$/p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --*)            echo "Unknown flag: $arg" >&2; exit 2 ;;
+    *)              NAME="$arg" ;;
+  esac
+done
+
+[ -z "${NAME}" ] && NAME="$(basename "${REPO_ROOT}")"
+
+# ══════════════════════════════════════════════════════════════════════
+# 1. Detach from template git history (if applicable).
+# ══════════════════════════════════════════════════════════════════════
+step "Git history"
+if [ "${NO_DETACH}" -eq 1 ]; then
+  echo "  → --no-detach given, leaving .git as-is"
+elif [ -d .git ]; then
+  origin_url="$(git config --get remote.origin.url 2>/dev/null || echo '')"
+  is_template_origin=0
+  for pat in "${TEMPLATE_REMOTE_PATTERNS[@]}"; do
+    case "${origin_url}" in *"${pat}"*) is_template_origin=1 ;; esac
+  done
+
+  if [ "${is_template_origin}" -eq 1 ] || [ -z "${origin_url}" ] && git log -1 --pretty=%s 2>/dev/null | grep -qiE 'stage|starter|template'; then
+    echo "  → detaching from template git history"
+    rm -rf .git
+    git init -q -b main
+    echo "  → fresh git repo (branch: main)"
+  else
+    echo "  → existing git history kept (origin: ${origin_url:-<none>})"
+  fi
+else
+  git init -q -b main
+  echo "  → initialised fresh git repo"
+fi
+
+# ══════════════════════════════════════════════════════════════════════
+# 2. Rename placeholders.
+# ══════════════════════════════════════════════════════════════════════
+step "Rename → ${NAME}"
+./bin/rename-project "${NAME}"
+
+# ══════════════════════════════════════════════════════════════════════
+# 3. Bootstrap.
+# ══════════════════════════════════════════════════════════════════════
+if [ "${NO_BOOTSTRAP}" -eq 1 ]; then
+  step "Skip bootstrap (--no-bootstrap)"
+else
+  step "Bootstrap"
+  ./bootstrap.sh
+fi
+
+# ══════════════════════════════════════════════════════════════════════
+# 4. Initial commit if clean & no commits yet.
+# ══════════════════════════════════════════════════════════════════════
+step "Initial commit"
+if [ ! -d .git ]; then
+  echo "  → no .git (skipped detach), nothing to commit"
+elif git rev-parse HEAD >/dev/null 2>&1; then
+  echo "  → repo already has commits — skipping initial commit"
+else
+  git add -A
+  git -c user.email="${USER}@local" -c user.name="${USER}" commit -q -m "chore: initialise project as ${NAME}
+
+From template: github.com/mishanikhinkirill/odezhda
+Renamed by bin/init.
+"
+  echo "  → created initial commit on main"
+fi
+
+cat <<EOF
+
+${GREEN}🎉 Project '${NAME}' is ready.${NC}
+
+  ${BOLD}make dev${NC}           — start everything (Docker + Rails + Vite)
+  ${BOLD}make doctor${NC}        — diagnose any first-run issues
+  ${BOLD}make help${NC}           — full command list
+
+Open Claude Code in this folder; it auto-loads CLAUDE.md + recent logs.
+EOF
