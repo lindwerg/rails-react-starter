@@ -8,20 +8,32 @@ Production-ready monorepo template for any project on **Rails 8 (API) + React 19
 
 ## Quick start
 
+**One-liner — clone, rename, install everything, in one go:**
+
 ```bash
-# 1. Clone and rename
-git clone <this-repo> myapp && cd myapp
-
-# 2. One-shot bootstrap — installs Ruby/Node, runs migrations, seeds, hooks
-./bootstrap.sh
-
-# 3. Start everything (Postgres, Rails API, Vite frontend)
-make dev
+curl -fsSL https://raw.githubusercontent.com/mishanikhinkirill/odezhda/main/create-app.sh | bash -s my-shop
+cd my-shop && make dev
 ```
 
-Open http://localhost:5173 — register, log in, create posts.
+That single command:
+- Clones the template into `./my-shop/`.
+- Renames every `App` / `app_*` placeholder (Rails module, DB names, container names, session key, Kamal service) to your project name.
+- Installs **mise → Ruby 3.3.6 + Node 22 + pnpm 9** (auto-installs mise itself if missing).
+- Installs **Docker Desktop** (macOS, via brew) and **starts it** if not running.
+- Picks **free TCP ports** for Rails / Vite / Postgres / Mailpit and writes them to `.ports.env` and `.env`.
+- Generates the Rails `master.key`, runs migrations + seeds, installs lefthook, lays down `.mcp.env`.
+- Verifies RSpec + Packwerk are clean.
 
-**Stuck on the first run?** `make doctor` checks mise activation, Docker daemon, ports, env files, hooks — and prints the exact fix for each ✗. See also [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md).
+Or via GitHub's "Use this template" button + `gh`:
+
+```bash
+gh repo create my-shop --template mishanikhinkirill/odezhda --clone --public
+cd my-shop && ./bin/init
+```
+
+After install: open http://localhost:$BACKEND_PORT — sign in as `demo@example.com / password123`.
+
+**Stuck on the first run?** `make doctor` checks mise, Docker, ports, env files, hooks — and prints the exact fix for each ✗. **`make heal`** auto-fixes the most common breakage (re-runs install, re-allocates ports, restarts Docker). See also [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md).
 
 **Inside Claude Code:** start any session with `/go` — it reads the latest log + git state and routes you to the right next action.
 
@@ -82,7 +94,10 @@ See [CLAUDE.md](./CLAUDE.md) for the full workflow.
 | Command | What it does |
 |---|---|
 | `make setup` | Install everything (Ruby, Node, gems, npm packages, DB, git hooks) |
-| `make dev` | Start Postgres + Rails (port 3000) + Vite (port 5173) |
+| `make bootstrap` | Idempotent first-run: install + allocate free ports + write `.env` + `master.key` |
+| `make heal` | Auto-fix common breakage (re-allocate ports, re-install gems/npm, restart Docker) |
+| `make ports` | Print currently-allocated dev ports |
+| `make dev` | Start Postgres + Rails + Vite using ports from `.ports.env` |
 | `make test` | RSpec + Vitest |
 | `make e2e` | Playwright end-to-end tests |
 | `make lint` | RuboCop + ESLint + Prettier |
