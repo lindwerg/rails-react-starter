@@ -2,10 +2,10 @@
 # Run `make help` to see what's available.
 
 .DEFAULT_GOAL := help
-.PHONY: help setup setup-tools setup-backend setup-frontend dev dev-services \
-        test test-backend test-frontend e2e \
+.PHONY: help bootstrap first-run setup setup-tools setup-backend setup-frontend \
+        dev dev-services test test-backend test-frontend e2e \
         lint lint-backend lint-frontend lint-fix \
-        typecheck security typegen pack-check \
+        typecheck security typegen pack-check check-all \
         log clean reset
 
 SHELL := /bin/bash
@@ -14,6 +14,12 @@ SHELL := /bin/bash
 help: ## Show this help
 	@echo "Targets:" && grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+
+# ---------- bootstrap ----------
+bootstrap: ## One-shot setup from a fresh clone (alias: first-run)
+	./bootstrap.sh
+
+first-run: bootstrap ## Alias for bootstrap
 
 # ---------- setup ----------
 setup: setup-tools setup-backend setup-frontend ## Install everything (tools, gems, npm, db, hooks)
@@ -79,6 +85,10 @@ security: ## Brakeman + bundler-audit + npm audit
 	cd backend && bundle exec brakeman --no-pager
 	cd backend && bundle exec bundle-audit check --update
 	cd frontend && pnpm audit --prod
+
+# ---------- everything (use before claiming "done") ----------
+check-all: test lint typecheck security pack-check ## Run every quality gate sequentially
+	@echo "✅ All checks green."
 
 # ---------- types from OpenAPI ----------
 typegen: ## Regenerate frontend types from backend OpenAPI

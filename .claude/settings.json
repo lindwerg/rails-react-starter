@@ -8,23 +8,39 @@
       "Bash(bin/rails *)",
       "Bash(bin/rspec *)",
       "Bash(bin/packwerk *)",
+      "Bash(bin/rubocop *)",
+      "Bash(./bootstrap.sh)",
+      "Bash(.claude/scripts/*)",
       "Bash(git status)",
       "Bash(git diff *)",
       "Bash(git log *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(docker compose *)"
+      "Bash(git rev-parse *)",
+      "Bash(docker compose *)",
+      "Bash(date *)",
+      "Bash(awk *)",
+      "Bash(grep *)",
+      "Bash(sed *)",
+      "Bash(cat .claude/*)",
+      "Bash(cat PROGRESS.md)",
+      "Bash(cat CLAUDE.md)"
     ]
   },
   "hooks": {
-    "Stop": [
+    "SessionStart": [
       {
         "matcher": "*",
         "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f /tmp/claude-just-exited-plan-mode ]; then echo '📝 Reminder: write a log to .claude/logs/ and update PROGRESS.md before ending the session.'; rm -f /tmp/claude-just-exited-plan-mode; fi"
-          }
+          { "type": "command", "command": ".claude/scripts/session-start.sh" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": ".claude/scripts/check-mcp-needed.sh" }
         ]
       }
     ],
@@ -32,12 +48,30 @@
       {
         "matcher": "ExitPlanMode",
         "hooks": [
+          { "type": "command", "command": "touch /tmp/claude-just-exited-plan-mode" }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
           {
             "type": "command",
-            "command": "touch /tmp/claude-just-exited-plan-mode"
+            "command": "jq -r '.tool_input.file_path // empty' 2>/dev/null | xargs -I{} .claude/scripts/check-tdd.sh {} 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f /tmp/claude-just-exited-plan-mode ]; then echo '📝 Reminder: run /new-log to record what you did, and update PROGRESS.md before ending. (CLAUDE.md §2.6)'; rm -f /tmp/claude-just-exited-plan-mode; fi"
           }
         ]
       }
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

@@ -8,6 +8,7 @@ Index of all `.claude/logs/` entries — read top-down. Newest first.
 
 ## 2026-04
 
+- 2026-04-28 — [Stage 10: Automation](.claude/logs/2026-04-28-stage-10-automation.md) — CLAUDE.md как контракт, .mcp.json (context7+magic-mcp+playwright), 8 slash-команд, скаффолдинг-скрипты, усиленные хуки, bootstrap.sh, output style.
 - 2026-04-28 — [Stage 9: Final summary](.claude/logs/2026-04-28-stage-9-final-summary.md) — Starter ready: 239 files, all 9 stages done in one session.
 - 2026-04-28 — [Stage 8: DevOps](.claude/logs/2026-04-28-stage-8-devops.md) — 3 GitHub Actions workflows, Dependabot, Kamal 2 template, backend Dockerfile.
 - 2026-04-28 — [Stage 7: Frontend Posts CRUD](.claude/logs/2026-04-28-stage-7-frontend-posts.md) — entities/post, create/edit/delete-post features, post-feed widget, pages, Playwright E2E.
