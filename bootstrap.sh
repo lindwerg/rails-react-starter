@@ -310,6 +310,14 @@ if [ ! -f .mcp.env ] && [ -f .mcp.example.env ]; then
   note "Created .mcp.env (add MAGIC_MCP_API_KEY for premium features)."
 fi
 
+# Defensive: if an existing .env has an empty RAILS_MASTER_KEY=, comment
+# it out — an empty value overrides the master.key file and breaks Rails
+# encryption with "ArgumentError: key must be 16 bytes".
+if [ -f .env ] && grep -qE '^RAILS_MASTER_KEY=[[:space:]]*(#.*)?$' .env; then
+  sed -i.bak -E "s|^(RAILS_MASTER_KEY=[[:space:]]*(#.*)?)$|# \1|" .env && rm -f .env.bak
+  note "Commented out empty RAILS_MASTER_KEY in .env (would override config/master.key)."
+fi
+
 # ══════════════════════════════════════════════════════════════════════
 # 10. Rails master key — auto-generate if missing.
 # ══════════════════════════════════════════════════════════════════════
