@@ -92,7 +92,7 @@ GEM
     bigdecimal (4.1.2)
     bootsnap (1.24.0)
       msgpack (~> 1.2)
-    brakeman (6.2.2)
+    brakeman (8.0.4)
       racc
     builder (3.3.0)
     bullet (8.1.1)
@@ -247,21 +247,21 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.2-aarch64-linux-gnu)
+    nokogiri (1.19.3-aarch64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-aarch64-linux-musl)
+    nokogiri (1.19.3-aarch64-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm-linux-gnu)
+    nokogiri (1.19.3-arm-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm-linux-musl)
+    nokogiri (1.19.3-arm-linux-musl)
       racc (~> 1.4)
-    nokogiri (1.19.2-arm64-darwin)
+    nokogiri (1.19.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-darwin)
+    nokogiri (1.19.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-linux-gnu)
+    nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
-    nokogiri (1.19.2-x86_64-linux-musl)
+    nokogiri (1.19.3-x86_64-linux-musl)
       racc (~> 1.4)
     oj (3.17.0)
       bigdecimal (>= 3.0)
@@ -374,14 +374,14 @@ GEM
     rspec-mocks (3.13.8)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-rails (7.1.1)
-      actionpack (>= 7.0)
-      activesupport (>= 7.0)
-      railties (>= 7.0)
-      rspec-core (~> 3.13)
-      rspec-expectations (~> 3.13)
-      rspec-mocks (~> 3.13)
-      rspec-support (~> 3.13)
+    rspec-rails (8.0.4)
+      actionpack (>= 7.2)
+      activesupport (>= 7.2)
+      railties (>= 7.2)
+      rspec-core (>= 3.13.0, < 5.0.0)
+      rspec-expectations (>= 3.13.0, < 5.0.0)
+      rspec-mocks (>= 3.13.0, < 5.0.0)
+      rspec-support (>= 3.13.0, < 5.0.0)
     rspec-support (3.13.7)
     rswag-api (2.17.0)
       activesupport (>= 5.2, < 8.2)
@@ -440,8 +440,8 @@ GEM
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
       logger
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -508,7 +508,7 @@ DEPENDENCIES
   annotate
   bcrypt (~> 3.1)
   bootsnap
-  brakeman (~> 6.2)
+  brakeman (~> 8.0)
   bullet
   bundler-audit (~> 0.9)
   database_cleaner-active_record
@@ -533,7 +533,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.0)
   rspec-collection_matchers
-  rspec-rails (~> 7.0)
+  rspec-rails (~> 8.0)
   rswag-api
   rswag-specs
   rswag-ui
@@ -543,7 +543,7 @@ DEPENDENCIES
   rubocop-rspec
   sentry-rails
   sentry-ruby
-  shoulda-matchers (~> 6.4)
+  shoulda-matchers (~> 7.0)
   simplecov
   solid_cable (~> 3.0)
   solid_cache (~> 1.0)
