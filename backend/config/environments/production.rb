@@ -26,4 +26,10 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   config.silence_healthcheck_path = "/up"
+
+  # Multi-DB: SolidQueue/Cache/Cable each live in their own database
+  # (see config/database.yml). Without these the workers query the
+  # primary DB and crash with `relation "solid_queue_processes" does
+  # not exist`. Production-only — test has a single DB, dev uses :async.
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 end

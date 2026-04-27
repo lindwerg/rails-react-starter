@@ -35,10 +35,9 @@ module App
     config.active_record.default_timezone = :utc
 
     config.active_job.queue_adapter = :solid_queue
-    # Multi-DB: SolidQueue/Cache/Cable each live in their own database
-    # (see config/database.yml). Without these the workers query the primary
-    # DB and crash with `relation "solid_queue_processes" does not exist`.
-    config.solid_queue.connects_to = { database: { writing: :queue } }
+    # NB: `config.solid_queue.connects_to = { database: { writing: :queue } }`
+    # lives in config/environments/production.rb — test env has a single DB,
+    # and dev runs jobs inline via :async (development.rb).
 
     config.cache_store = :solid_cache_store
 
