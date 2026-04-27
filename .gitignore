@@ -60,6 +60,7 @@ frontend/*.tsbuildinfo
 .claude/.last-test-status
 .claude/.last-packwerk-status
 .claude/.session-state
+.claude/scheduled_tasks.lock
 .mcp.env
 .playwright-mcp/
 
