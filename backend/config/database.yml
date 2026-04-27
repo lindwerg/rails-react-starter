@@ -14,14 +14,17 @@ development:
   cache:
     <<: *primary_dev
     database: app_development_cache
+    schema_dump: cache_schema.rb
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_dev
     database: app_development_queue
+    schema_dump: queue_schema.rb
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_dev
     database: app_development_cable
+    schema_dump: cable_schema.rb
     migrations_paths: db/cable_migrate
 
 test:
@@ -35,12 +38,15 @@ production:
   cache:
     <<: *primary_prod
     database: app_production_cache
+    schema_dump: cache_schema.rb
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_prod
     database: app_production_queue
+    schema_dump: queue_schema.rb
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_prod
     database: app_production_cable
+    schema_dump: cable_schema.rb
     migrations_paths: db/cable_migrate

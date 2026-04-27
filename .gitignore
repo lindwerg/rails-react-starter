@@ -67,6 +67,10 @@ frontend/*.tsbuildinfo
 .kamal/secrets
 config/credentials/*.key
 backend/config/master.key
+# credentials.yml.enc is encrypted with master.key — each clone of the
+# template generates its own pair via `bootstrap.sh`, so the template repo
+# itself must not ship a pre-generated one (consumers couldn't decrypt it).
+backend/config/credentials.yml.enc
 
 # Misc
 .cache/
