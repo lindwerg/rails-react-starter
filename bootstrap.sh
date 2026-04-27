@@ -42,6 +42,9 @@ mise trust "${REPO_ROOT}/.mise.toml"
 # ──────────────────────────────────────────────────────────────────────
 # 3. Install pinned versions.
 # ──────────────────────────────────────────────────────────────────────
+step "Configuring mise to use precompiled Ruby (avoids libyaml/openssl build failures)"
+mise settings ruby.compile=false || true
+
 step "Installing pinned Ruby + Node via mise"
 mise install
 
