@@ -42,7 +42,7 @@ If the user says *"continue"* / *"продолжаем"* / *"что дальше
 
 ### 2.1. MCP servers — when to use them
 
-Two MCP servers are configured project-wide in `.mcp.json` and **must be used**:
+Five MCP servers are configured project-wide in `.mcp.json` and **must be used**:
 
 #### **`context7`** — for ANY library/framework question
 Triggered by:
@@ -77,6 +77,33 @@ Workflow:
 For **logos and brand icons** specifically: `mcp__magic-mcp__logo_search` before reaching for `lucide-react`.
 
 If the MCP server is unavailable in the current session, say so out loud and ask the user how to proceed (do *not* silently write from scratch).
+
+#### **`shadcn-ui`** — for shadcn/ui primitives
+Triggered by:
+- You're about to add a shadcn primitive (Button, Dialog, Sheet, Form, Tabs, …) to `frontend/src/shared/ui/`
+- User asks "use shadcn X here"
+
+Workflow:
+1. `mcp__shadcn-ui__list_shadcn_components` to see what exists
+2. `mcp__shadcn-ui__get_component_details` for the chosen one — pulls the canonical source
+3. Place into `frontend/src/shared/ui/<name>/` with our `cn()` and a colocated test + story
+
+**Use this BEFORE `magic-mcp` when you know you want a shadcn primitive.** Use `magic-mcp` for non-shadcn or compositional UI (page sections, marketing blocks, etc.).
+
+#### **`sequential-thinking`** — for hard reasoning
+Triggered by:
+- Migration with downtime risk (rename column, change type, drop FK on big table)
+- Designing a schema with 4+ related entities and unclear ownership
+- Debugging a non-obvious failure where you've already tried 2 hypotheses and missed
+- Trade-off analysis ("should we use approach A or B given constraints X, Y, Z")
+
+Use `mcp__sequential-thinking__sequentialthinking` to externalize the reasoning. Don't use for trivial decisions — it's overhead when the answer is obvious.
+
+#### **`playwright`** — for browser-driven E2E debugging
+Triggered by:
+- User reports a UI bug and asks you to reproduce
+- You've added a new page and want to walk through it before declaring done
+- An E2E test is flaky and you need to diagnose live
 
 ### 2.2. TDD is the law
 
