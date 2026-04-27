@@ -11,7 +11,7 @@ Production-ready monorepo template for any project on **Rails 8 (API) + React 19
 **One-liner — clone, rename, install everything, in one go:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mishanikhinkirill/odezhda/main/create-app.sh | bash -s my-shop
+curl -fsSL https://raw.githubusercontent.com/lindwerg/rails-react-starter/main/create-app.sh | bash -s my-shop
 cd my-shop && make dev
 ```
 
@@ -27,7 +27,7 @@ That single command:
 Or via GitHub's "Use this template" button + `gh`:
 
 ```bash
-gh repo create my-shop --template mishanikhinkirill/odezhda --clone --public
+gh repo create my-shop --template lindwerg/rails-react-starter --clone --public
 cd my-shop && ./bin/init
 ```
 

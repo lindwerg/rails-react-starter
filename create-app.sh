@@ -3,13 +3,13 @@
 #
 # Designed to be invoked via `curl | bash`:
 #
-#   curl -fsSL https://raw.githubusercontent.com/mishanikhinkirill/odezhda/main/create-app.sh \
+#   curl -fsSL https://raw.githubusercontent.com/lindwerg/rails-react-starter/main/create-app.sh \
 #     | bash -s my-shop
 #
 # Or directly after cloning:  ./create-app.sh my-shop
 #
 # Env overrides:
-#   TEMPLATE_REPO   default: github.com/mishanikhinkirill/odezhda
+#   TEMPLATE_REPO   default: github.com/lindwerg/rails-react-starter
 #   TEMPLATE_REF    default: main
 #   NO_BOOTSTRAP    if set, skip bootstrap (rename only)
 
@@ -22,7 +22,7 @@ if [ -z "${NAME}" ]; then
   exit 2
 fi
 
-TEMPLATE_REPO="${TEMPLATE_REPO:-https://github.com/mishanikhinkirill/odezhda.git}"
+TEMPLATE_REPO="${TEMPLATE_REPO:-https://github.com/lindwerg/rails-react-starter.git}"
 TEMPLATE_REF="${TEMPLATE_REF:-main}"
 
 GREEN=$'\033[0;32m'

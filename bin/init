@@ -28,7 +28,7 @@ step() { printf "\n${GREEN}━━━ %s ━━━${NC}\n" "$1"; }
 NAME=""
 NO_DETACH=0
 NO_BOOTSTRAP=0
-TEMPLATE_REMOTE_PATTERNS=("mishanikhinkirill/odezhda" "github.com:mishanikhinkirill/odezhda")
+TEMPLATE_REMOTE_PATTERNS=("lindwerg/rails-react-starter" "github.com:lindwerg/rails-react-starter")
 
 for arg in "$@"; do
   case "$arg" in
@@ -96,7 +96,7 @@ else
   git add -A
   git -c user.email="${USER}@local" -c user.name="${USER}" commit -q -m "chore: initialise project as ${NAME}
 
-From template: github.com/mishanikhinkirill/odezhda
+From template: github.com/lindwerg/rails-react-starter
 Renamed by bin/init.
 "
   echo "  → created initial commit on main"
