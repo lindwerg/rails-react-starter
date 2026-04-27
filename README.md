@@ -27,6 +27,19 @@ Open http://localhost:5173 — register, log in, create posts.
 
 ---
 
+## Tour — read in this order
+
+1. [`CLAUDE.md`](./CLAUDE.md) — operating contract for the project. Rules for every PR.
+2. [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — picture of Packwerk + FSD layers and how a request flows through them.
+3. [`docs/DECISIONS.md`](./docs/DECISIONS.md) — *why* we chose what we chose (Packwerk over engines, JWT in cookies, etc.).
+4. [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) — known pain points and fixes.
+5. One pack: [`backend/packs/posts/`](./backend/packs/posts/) — the canonical example. Read its `package.yml`, model, services, controller, specs.
+6. One slice: [`frontend/src/features/create-post/`](./frontend/src/features/create-post/) — canonical FSD feature.
+
+After that you'll know enough to ship.
+
+---
+
 ## What's inside
 
 ```
