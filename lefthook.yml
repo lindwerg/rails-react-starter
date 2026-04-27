@@ -36,6 +36,9 @@ pre-push:
     frontend-tests:
       root: frontend/
       run: mise x -- pnpm test --run
+    typecheck:
+      root: frontend/
+      run: mise x -- pnpm typecheck
     packwerk:
       root: backend/
       run: mise x -- bin/packwerk check

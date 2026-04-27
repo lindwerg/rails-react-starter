@@ -57,6 +57,10 @@ group :development, :test do
   gem "shoulda-matchers", "~> 6.4"
   gem "rswag-specs"
   gem "dotenv-rails"
+  # Mutation testing — opt-in. Uncomment, bundle install, then trigger
+  # the "Mutation Tests" GitHub Actions workflow manually for a pack.
+  # Expect 10+ minutes per pack — DO NOT enable for every PR.
+  # gem "mutant-rspec", "~> 0.12"
 end
 
 group :development do

@@ -1,0 +1,79 @@
+name: Mutation Tests (opt-in)
+
+# Mutation testing is expensive (often 10+ minutes for one pack).
+# We DO NOT run on every PR. Trigger manually when you want to harden a pack.
+on:
+  workflow_dispatch:
+    inputs:
+      pack:
+        description: 'Pack to mutate (e.g. posts, auth)'
+        required: true
+        default: 'posts'
+
+permissions:
+  contents: read
+
+jobs:
+  mutate-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/app_test
+      JWT_SECRET: test-secret
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.6'
+          bundler-cache: true
+          working-directory: backend
+
+      - name: Prepare database
+        run: bin/rails db:prepare
+
+      - name: Check if mutant is available
+        id: check_mutant
+        run: |
+          if bundle exec ruby -e "require 'mutant'; require 'mutant/rspec'" 2>/dev/null; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Hint to enable mutant
+        if: steps.check_mutant.outputs.available != 'true'
+        run: |
+          echo "::warning::mutant-rspec is not in the Gemfile."
+          echo "To enable mutation testing, uncomment the mutant-rspec line in backend/Gemfile,"
+          echo "run 'bundle install', commit, and re-trigger this workflow."
+          exit 0
+
+      - name: Run mutant against pack
+        if: steps.check_mutant.outputs.available == 'true'
+        run: |
+          PACK="${{ github.event.inputs.pack }}"
+          bundle exec mutant run \
+            --include packs/${PACK}/app \
+            --require ${PACK} \
+            --use rspec \
+            -- "${PACK}::*"
