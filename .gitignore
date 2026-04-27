@@ -56,6 +56,9 @@ frontend/storybook-static/
 .claude/.local/
 .claude/cache/
 .claude/settings.local.json
+.claude/.last-test-status
+.claude/.last-packwerk-status
+.claude/.session-state
 .mcp.env
 .playwright-mcp/
 

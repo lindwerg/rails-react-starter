@@ -88,5 +88,10 @@
       }
     ]
   },
+  "outputStyle": "terse",
+  "statusLine": {
+    "type": "command",
+    "command": ".claude/scripts/statusline.sh"
+  },
   "enableAllProjectMcpServers": true
 }

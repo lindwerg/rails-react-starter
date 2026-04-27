@@ -47,7 +47,13 @@ dev-services: ## Start docker-compose services (postgres, mailhog)
 	docker compose up -d
 
 # ---------- test ----------
-test: test-backend test-frontend ## Run all tests
+test: ## Run all tests (writes .claude/.last-test-status for the Claude statusline)
+	@mkdir -p .claude
+	@if $(MAKE) -s test-backend && $(MAKE) -s test-frontend; then \
+		echo pass > .claude/.last-test-status; \
+	else \
+		echo fail > .claude/.last-test-status; exit 1; \
+	fi
 
 test-backend: ## RSpec
 	cd backend && bin/rspec
@@ -77,8 +83,13 @@ lint-fix: ## Auto-fix linter issues
 typecheck: ## TypeScript strict check
 	cd frontend && pnpm typecheck
 
-pack-check: ## Packwerk architectural boundaries
-	cd backend && bin/packwerk check
+pack-check: ## Packwerk architectural boundaries (writes .claude/.last-packwerk-status for the statusline)
+	@mkdir -p .claude
+	@if cd backend && bin/packwerk check; then \
+		echo clean > ../.claude/.last-packwerk-status; \
+	else \
+		echo dirty > ../.claude/.last-packwerk-status; exit 1; \
+	fi
 
 # ---------- security ----------
 security: ## Brakeman + bundler-audit + npm audit
