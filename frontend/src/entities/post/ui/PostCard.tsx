@@ -10,8 +10,7 @@ export function PostCard({ post, actions }: { post: Post; actions?: React.ReactN
           <CardTitle>{post.title}</CardTitle>
         </Link>
         <p className="text-xs text-neutral-500">
-          {post.published ? 'Published' : 'Draft'} ·{' '}
-          {new Date(post.createdAt).toLocaleString()}
+          {post.published ? 'Published' : 'Draft'} · {new Date(post.createdAt).toLocaleString()}
         </p>
       </CardHeader>
       <CardContent>

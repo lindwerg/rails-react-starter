@@ -8,7 +8,12 @@ export const handlers = [
     const body = (await request.json()) as { email: string; password: string; name?: string };
     return HttpResponse.json(
       {
-        user: { id: 1, email: body.email, name: body.name ?? '', createdAt: new Date().toISOString() },
+        user: {
+          id: 1,
+          email: body.email,
+          name: body.name ?? '',
+          createdAt: new Date().toISOString(),
+        },
         token: 'fake-jwt',
       },
       { status: 201 },
@@ -26,13 +31,21 @@ export const handlers = [
         { status: 201 },
       );
     }
-    return HttpResponse.json({ error: 'Invalid email or password', code: 'invalid_credentials' }, { status: 401 });
+    return HttpResponse.json(
+      { error: 'Invalid email or password', code: 'invalid_credentials' },
+      { status: 401 },
+    );
   }),
 
   http.delete(apiUrl('/auth/sign_out'), () => new HttpResponse(null, { status: 204 })),
 
   http.get(apiUrl('/me'), () =>
-    HttpResponse.json({ id: 1, email: 'demo@example.com', name: 'Demo', createdAt: new Date().toISOString() }),
+    HttpResponse.json({
+      id: 1,
+      email: 'demo@example.com',
+      name: 'Demo',
+      createdAt: new Date().toISOString(),
+    }),
   ),
 
   http.get(apiUrl('/posts'), () =>

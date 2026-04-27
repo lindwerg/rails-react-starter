@@ -27,5 +27,10 @@ export function useSession() {
     qc.removeQueries({ queryKey: SESSION_QUERY_KEY });
   }
 
-  return { user, isLoading: isLoading || query.isLoading, signOut, refresh: () => qc.invalidateQueries({ queryKey: SESSION_QUERY_KEY }) };
+  return {
+    user,
+    isLoading: isLoading || query.isLoading,
+    signOut,
+    refresh: () => qc.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+  };
 }

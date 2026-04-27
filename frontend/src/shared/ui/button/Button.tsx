@@ -9,7 +9,7 @@ export const buttonVariants = cva(
       variant: {
         default: 'bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500',
         outline: 'border border-neutral-300 bg-white hover:bg-neutral-100',
-        ghost:   'hover:bg-neutral-100',
+        ghost: 'hover:bg-neutral-100',
         destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
       },
       size: {

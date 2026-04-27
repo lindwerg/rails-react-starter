@@ -39,7 +39,12 @@ export function SignUpForm({ onSuccess }: Props) {
         error={formState.errors.password?.message}
         hint="Minimum 8 characters"
       >
-        <Input id="password" type="password" autoComplete="new-password" {...register('password')} />
+        <Input
+          id="password"
+          type="password"
+          autoComplete="new-password"
+          {...register('password')}
+        />
       </FormField>
       {formState.errors.root && (
         <p role="alert" className="text-sm text-red-600">

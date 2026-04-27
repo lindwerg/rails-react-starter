@@ -31,7 +31,12 @@ export function SignInForm({ onSuccess }: Props) {
         <Input id="email" type="email" autoComplete="email" {...register('email')} />
       </FormField>
       <FormField label="Password" htmlFor="password" error={formState.errors.password?.message}>
-        <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+        <Input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          {...register('password')}
+        />
       </FormField>
       {formState.errors.root && (
         <p role="alert" className="text-sm text-red-600">
