@@ -107,32 +107,71 @@ step "Installing pinned Ruby + Node via mise"
 retry mise install
 
 # ══════════════════════════════════════════════════════════════════════
-# 3. Verify mise is active in *this* shell.
+# 3. Force-activate mise for the rest of *this* script.
+#
+# We don't require the user's shell to be set up — we just prepend
+# mise's shims dir to PATH so `ruby`, `node`, `bundle`, etc. resolve to
+# mise's versions for the duration of bootstrap.
 # ══════════════════════════════════════════════════════════════════════
-step "Verifying mise is active in this shell"
+step "Activating mise for this script"
 RUBY_PATH="$(mise which ruby 2>/dev/null || true)"
 NODE_PATH="$(mise which node 2>/dev/null || true)"
-ACTIVE_RUBY="$(command -v ruby || true)"
-ACTIVE_NODE="$(command -v node || true)"
 
 if [ -z "${RUBY_PATH}" ] || [ -z "${NODE_PATH}" ]; then
   fail "mise didn't install runtimes. Run 'mise doctor' to diagnose."
 fi
 
-if [ "${ACTIVE_RUBY}" != "${RUBY_PATH}" ] || [ "${ACTIVE_NODE}" != "${NODE_PATH}" ]; then
-  warn "mise is installed but NOT activated in *this* shell."
-  echo ""
-  echo "  Active ruby:   ${ACTIVE_RUBY}"
-  echo "  Should be:     ${RUBY_PATH}"
-  echo "  Active node:   ${ACTIVE_NODE}"
-  echo "  Should be:     ${NODE_PATH}"
-  echo ""
-  echo "Restart your terminal (or 'source ~/.zshrc') and re-run ./bootstrap.sh."
-  exit 1
+# Prefer mise's shims dir (works in any shell, no eval magic needed).
+MISE_SHIMS="$(mise where ruby 2>/dev/null | sed 's|/installs/.*|/shims|')"
+if [ -z "${MISE_SHIMS}" ] || [ ! -d "${MISE_SHIMS}" ]; then
+  MISE_SHIMS="${HOME}/.local/share/mise/shims"
+fi
+if [ -d "${MISE_SHIMS}" ]; then
+  export PATH="${MISE_SHIMS}:${PATH}"
 fi
 
-note "ruby = $(ruby -v)"
-note "node = $(node -v)"
+# Last resort: source mise's shell hook so PATH and hashes update.
+eval "$(mise activate bash 2>/dev/null)" || true
+hash -r 2>/dev/null || true
+
+ACTIVE_RUBY="$(command -v ruby || true)"
+ACTIVE_NODE="$(command -v node || true)"
+
+# After both fixes, our `ruby`/`node` should be either the shimmed binary
+# (which delegates to mise) or the real install path. Both are fine —
+# only fail if we still have a system /usr/bin/ruby on PATH first.
+case "${ACTIVE_RUBY}" in
+  *"/.local/share/mise/"*|*"/mise/"*) : ;;
+  *)
+    warn "ruby on PATH is still '${ACTIVE_RUBY}'."
+    echo "  Forcing mise shims for the rest of bootstrap."
+    export PATH="${MISE_SHIMS}:${PATH}"
+    ;;
+esac
+case "${ACTIVE_NODE}" in
+  *"/.local/share/mise/"*|*"/mise/"*) : ;;
+  *)
+    warn "node on PATH is still '${ACTIVE_NODE}'."
+    echo "  Forcing mise shims for the rest of bootstrap."
+    export PATH="${MISE_SHIMS}:${PATH}"
+    ;;
+esac
+
+# Persist mise activation in ~/.zshrc / ~/.bashrc for *future* shells —
+# but don't require it to be active right now.
+for rc in "${HOME}/.zshrc" "${HOME}/.bashrc"; do
+  if [ -f "${rc}" ] && ! grep -q 'mise activate' "${rc}" 2>/dev/null; then
+    {
+      echo ''
+      echo '# mise — Ruby/Node version manager'
+      echo 'eval "$(mise activate '"$(basename "${rc}" | sed 's/^\.//;s/rc$//')"')"'
+    } >> "${rc}"
+    note "Added mise activation to ${rc} (takes effect in next shell)."
+  fi
+done
+
+note "ruby = $(ruby -v 2>&1)"
+note "node = $(node -v 2>&1)"
 
 # ══════════════════════════════════════════════════════════════════════
 # 4. pnpm via corepack.
