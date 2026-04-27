@@ -235,6 +235,21 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════════════
+# 6b. overmind / foreman — process manager for `make dev`.
+#     Install one now so `bin/dev` doesn't pause to install it later.
+# ══════════════════════════════════════════════════════════════════════
+step "Installing process manager (overmind preferred, foreman as fallback)"
+if command -v overmind >/dev/null 2>&1; then
+  note "overmind already installed: $(overmind --version)"
+elif command -v foreman >/dev/null 2>&1; then
+  note "foreman already installed (overmind not, that's OK)"
+elif command -v brew >/dev/null 2>&1; then
+  brew install overmind || gem install foreman --user-install
+else
+  gem install foreman --user-install
+fi
+
+# ══════════════════════════════════════════════════════════════════════
 # 7. gh CLI (used by 'gh repo create', PR review, etc).
 # ══════════════════════════════════════════════════════════════════════
 step "Installing gh (GitHub CLI)"

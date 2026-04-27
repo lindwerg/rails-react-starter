@@ -7,6 +7,20 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "${REPO_ROOT}"
 
+# Force-activate mise so `gem`, `ruby`, `node`, `pnpm` resolve to mise's
+# pinned versions even when the user's shell hasn't sourced `mise activate`.
+if command -v mise >/dev/null 2>&1; then
+  MISE_SHIMS="$(mise where ruby 2>/dev/null | sed 's|/installs/.*|/shims|')"
+  if [ -z "${MISE_SHIMS}" ] || [ ! -d "${MISE_SHIMS}" ]; then
+    MISE_SHIMS="${HOME}/.local/share/mise/shims"
+  fi
+  if [ -d "${MISE_SHIMS}" ]; then
+    export PATH="${MISE_SHIMS}:${PATH}"
+  fi
+  eval "$(mise activate bash 2>/dev/null)" || true
+  hash -r 2>/dev/null || true
+fi
+
 # Load auto-allocated ports from .ports.env (creates one if missing).
 if [[ -x bin/allocate-ports ]]; then
   if [[ ! -f .ports.env ]]; then
@@ -33,7 +47,9 @@ if command -v foreman >/dev/null 2>&1; then
 fi
 
 # Neither installed — try to install foreman as a last-resort.
-echo "Neither overmind nor foreman is installed."
-echo "Installing foreman now (gem install foreman)..."
+# `gem` here resolves to mise's gem (mise was force-activated above), so
+# this writes to mise's user-prefix gem dir, NOT system /Library/Ruby/.
+echo "Neither overmind nor foreman is installed. Installing foreman..."
 gem install foreman
+hash -r 2>/dev/null || true
 exec foreman start -f Procfile.dev "$@"
