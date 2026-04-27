@@ -4,7 +4,7 @@ ruby "3.3.6"
 
 # === Core ===
 gem "rails", "~> 8.0.0"
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.5.9"  # 1.6.x segfaults on connect_start with multi-DB on macOS arm64
 gem "puma", "~> 6.4"
 
 # === Solid stack (Rails 8 built-ins) ===

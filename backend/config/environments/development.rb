@@ -30,6 +30,11 @@ Rails.application.configure do
   config.active_record.migration_error = :page_load
   config.active_record.verbose_query_logs = true
   config.active_job.verbose_enqueue_logs = true
+  # In dev, run jobs inline via the :async adapter (in-process threadpool).
+  # Avoids the SolidQueue supervisor's fork-after-DB-connect segfault on
+  # macOS arm64 with multi-DB. Production still uses :solid_queue
+  # (see config/application.rb).
+  config.active_job.queue_adapter = :async
 
   config.action_controller.raise_on_missing_callback_actions = true
 

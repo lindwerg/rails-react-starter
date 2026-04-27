@@ -1,3 +1,7 @@
 web:      cd backend && bin/rails server -p ${BACKEND_PORT:-3000}
-worker:   cd backend && bin/rails solid_queue:start
 frontend: cd frontend && pnpm dev --host --port ${FRONTEND_PORT:-5173}
+# Background jobs run inline via :async adapter in development (see
+# config/environments/development.rb). To exercise the real Solid Queue
+# pipeline locally, uncomment the line below — but note that fork-based
+# supervisors can crash on macOS arm64 with multi-DB.
+# worker:   cd backend && bin/rails solid_queue:start
