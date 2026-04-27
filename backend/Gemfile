@@ -1,0 +1,80 @@
+source "https://rubygems.org"
+
+ruby "3.3.6"
+
+# === Core ===
+gem "rails", "~> 8.0.0"
+gem "pg", "~> 1.5"
+gem "puma", "~> 6.4"
+
+# === Solid stack (Rails 8 built-ins) ===
+gem "solid_queue", "~> 1.0"
+gem "solid_cache", "~> 1.0"
+gem "solid_cable", "~> 3.0"
+
+# === Auth ===
+gem "bcrypt", "~> 3.1"
+gem "jwt", "~> 2.8"
+gem "pundit", "~> 2.4"
+
+# === API & serialization ===
+gem "alba", "~> 3.5"
+gem "pagy", "~> 9.0"
+gem "rack-cors"
+gem "rack-attack"
+gem "oj", "~> 3.16"
+
+# === Validation ===
+gem "dry-validation", "~> 1.10"
+gem "dry-monads", "~> 1.6"
+
+# === OpenAPI ===
+gem "rswag-api"
+gem "rswag-ui"
+
+# === Architecture ===
+gem "packwerk", "~> 3.2"
+gem "packwerk-extensions", "~> 0.6"
+
+# === Observability ===
+gem "lograge"
+gem "sentry-ruby"
+gem "sentry-rails"
+
+# === Migrations safety ===
+gem "strong_migrations", "~> 1.8"
+
+# === Misc ===
+gem "tzinfo-data", platforms: %i[windows jruby]
+gem "bootsnap", require: false
+gem "image_processing", "~> 1.13"
+
+group :development, :test do
+  gem "debug", platforms: %i[mri windows]
+  gem "rspec-rails", "~> 7.0"
+  gem "factory_bot_rails", "~> 6.4"
+  gem "faker", "~> 3.4"
+  gem "shoulda-matchers", "~> 6.4"
+  gem "rswag-specs"
+  gem "dotenv-rails"
+end
+
+group :development do
+  gem "rubocop-rails-omakase", require: false
+  gem "rubocop-rspec", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-factory_bot", require: false
+  gem "brakeman", "~> 6.2", require: false
+  gem "bundler-audit", "~> 0.9", require: false
+  gem "bullet"
+  gem "letter_opener"
+  gem "annotate"
+end
+
+group :test do
+  gem "simplecov", require: false
+  gem "database_cleaner-active_record"
+  gem "vcr"
+  gem "webmock"
+  gem "rspec-collection_matchers"
+end

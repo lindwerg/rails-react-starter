@@ -1,0 +1,12 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: platform
+
+dependencies:
+  - packs/shared
+
+metadata:
+  responsibilities: |
+    Infrastructure layer: background jobs, mailers, file storage adapters.
+    Glue between business_domain and the outside world.

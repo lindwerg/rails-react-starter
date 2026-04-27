@@ -1,0 +1,12 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: business_domain
+
+dependencies:
+  - packs/shared
+
+metadata:
+  responsibilities: |
+    User domain. Owns the User AR model, user policies, user serializer,
+    and user-related queries. The canonical source of "who the user is".

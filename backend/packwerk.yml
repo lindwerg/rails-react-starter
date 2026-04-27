@@ -1,0 +1,30 @@
+# Packwerk configuration.
+# Layers (top → bottom): higher layers can depend on lower; not vice-versa.
+
+include:
+  - "**/*.{rb,rake,erb}"
+
+exclude:
+  - "{bin,node_modules,spec,tmp,vendor,config}/**/*"
+
+package_paths:
+  - "."
+  - "packs/*"
+
+require:
+  - packwerk/privacy/checker
+  - packwerk/visibility/checker
+  - packwerk/folder_visibility/checker
+  - packwerk/layer/checker
+
+# 4 architectural layers (FSD-equivalent for Rails)
+layers:
+  - orchestrator      # presentation: api (controllers, serializers)
+  - business_domain   # domain logic: auth, users, posts
+  - platform          # infrastructure: jobs, mailers, storage
+  - utility           # pure helpers: shared
+
+parallel: true
+
+cache: true
+cache_directory: tmp/cache/packwerk

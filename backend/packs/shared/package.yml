@@ -1,0 +1,12 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: utility
+
+# utility can only depend on utility
+dependencies: []
+
+metadata:
+  responsibilities: |
+    Pure utilities — no domain knowledge, no Rails-specific code.
+    Result objects, generic value objects, error classes.

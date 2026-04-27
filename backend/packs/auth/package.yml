@@ -1,0 +1,13 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: business_domain
+
+dependencies:
+  - packs/users
+  - packs/shared
+
+metadata:
+  responsibilities: |
+    Authentication domain. JWT issuance/verification, sign-up, sign-in
+    services. Owns no model — uses User from packs/users.

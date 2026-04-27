@@ -1,0 +1,17 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: orchestrator
+
+# api can depend on any business_domain pack (it orchestrates them)
+dependencies:
+  - packs/auth
+  - packs/users
+  - packs/posts
+  - packs/shared
+
+metadata:
+  responsibilities: |
+    HTTP-presentation layer. Controllers, request shape, serializers
+    for the public API surface. Knows about HTTP, knows about domain
+    services — never holds business rules itself.

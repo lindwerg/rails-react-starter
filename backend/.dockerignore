@@ -1,0 +1,12 @@
+.git
+log/*
+tmp/*
+storage/*
+.rspec_status
+.rubocop_cache
+coverage
+spec
+node_modules
+.env
+.env.*
+!.env.production

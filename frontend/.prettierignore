@@ -1,0 +1,7 @@
+dist
+node_modules
+storybook-static
+playwright-report
+test-results
+src/shared/api/types.gen.ts
+pnpm-lock.yaml

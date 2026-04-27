@@ -1,0 +1,27 @@
+# PROGRESS.md
+
+Index of all `.claude/logs/` entries — read top-down. Newest first.
+
+> Format: `- YYYY-MM-DD — [title](.claude/logs/file.md) — one-line summary`
+
+---
+
+## 2026-04
+
+- 2026-04-28 — [Stage 9: Final summary](.claude/logs/2026-04-28-stage-9-final-summary.md) — Starter ready: 239 files, all 9 stages done in one session.
+- 2026-04-28 — [Stage 8: DevOps](.claude/logs/2026-04-28-stage-8-devops.md) — 3 GitHub Actions workflows, Dependabot, Kamal 2 template, backend Dockerfile.
+- 2026-04-28 — [Stage 7: Frontend Posts CRUD](.claude/logs/2026-04-28-stage-7-frontend-posts.md) — entities/post, create/edit/delete-post features, post-feed widget, pages, Playwright E2E.
+- 2026-04-28 — [Stage 6: Frontend Auth](.claude/logs/2026-04-28-stage-6-frontend-auth.md) — entities/user+session, auth-by-email feature, sign-in/sign-up pages, E2E.
+- 2026-04-28 — [Stage 5: Frontend skeleton](.claude/logs/2026-04-28-stage-5-frontend-skeleton.md) — Vite+React 19 strict TS, FSD scaffolding, shared/ui kit, Vitest+Playwright+MSW+Storybook.
+- 2026-04-28 — [Stage 4: Posts CRUD](.claude/logs/2026-04-28-stage-4-posts-crud.md) — Post model, dry-validation form, Create/Update/Destroy services, PostsController, full request specs.
+- 2026-04-28 — [Stage 3: Auth + Users](.claude/logs/2026-04-28-stage-3-auth-users.md) — User model, JWT issuer/verifier, SignUp/SignIn services, Auth/Me controllers, request specs.
+- 2026-04-28 — [Stage 2: Backend skeleton](.claude/logs/2026-04-28-stage-2-backend-skeleton.md) — Rails 8 API config, Packwerk 4 слоя, 6 packs, RSpec/RuboCop/SimpleCov.
+- 2026-04-28 — [Stage 1: Repository scaffolding](.claude/logs/2026-04-28-stage-1-scaffolding.md) — Created repo skeleton, CLAUDE.md, .claude/logs/, Makefile, docker-compose, .mise.toml.
+
+---
+
+## How to read this file
+
+1. Top entry = most recent state of the project.
+2. Each log entry has: what was done, why, open TODOs, and what's next.
+3. Claude reads the **two latest entries** at session start to understand context.

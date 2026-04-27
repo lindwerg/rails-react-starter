@@ -1,0 +1,13 @@
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: business_domain
+
+dependencies:
+  - packs/users
+  - packs/shared
+
+metadata:
+  responsibilities: |
+    Posts CRUD domain. Owns Post model, services to create/update/delete,
+    queries (Posts::Published, etc.), and policy.

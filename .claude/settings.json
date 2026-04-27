@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(make *)",
+      "Bash(bundle *)",
+      "Bash(pnpm *)",
+      "Bash(bin/rails *)",
+      "Bash(bin/rspec *)",
+      "Bash(bin/packwerk *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(docker compose *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f /tmp/claude-just-exited-plan-mode ]; then echo '📝 Reminder: write a log to .claude/logs/ and update PROGRESS.md before ending the session.'; rm -f /tmp/claude-just-exited-plan-mode; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "touch /tmp/claude-just-exited-plan-mode"
+          }
+        ]
+      }
+    ]
+  }
+}

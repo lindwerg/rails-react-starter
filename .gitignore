@@ -1,0 +1,66 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+log/
+tmp/
+
+# Backend (Rails)
+backend/log/
+backend/tmp/
+backend/.bundle/
+backend/vendor/bundle/
+backend/storage/
+backend/coverage/
+backend/public/assets/
+backend/public/packs/
+backend/.byebug_history
+backend/.rspec_status
+backend/.rubocop_cache/
+backend/swagger/v1/swagger.yaml.tmp
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.turbo/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/.eslintcache
+frontend/storybook-static/
+
+# Lockfile policy: keep them committed (do NOT ignore)
+# - backend/Gemfile.lock
+# - frontend/pnpm-lock.yaml
+
+# Claude
+.claude/.local/
+.claude/cache/
+
+# Kamal
+.kamal/secrets
+config/credentials/*.key
+backend/config/master.key
+
+# Misc
+.cache/
+*.pid

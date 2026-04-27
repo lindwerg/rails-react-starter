@@ -1,0 +1,13 @@
+# mise (formerly rtx) — version manager for Ruby and Node
+# https://mise.jdx.dev
+#
+# Run `mise install` to install both runtimes pinned below.
+
+[tools]
+ruby = "3.3.6"
+node = "22.11.0"
+pnpm = "9.15.0"
+
+[env]
+RAILS_ENV = "development"
+NODE_ENV = "development"

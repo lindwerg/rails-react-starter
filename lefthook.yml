@@ -1,0 +1,37 @@
+pre-commit:
+  parallel: true
+  commands:
+    rubocop:
+      root: backend/
+      glob: "*.{rb,rake}"
+      run: bundle exec rubocop --force-exclusion {staged_files}
+      stage_fixed: true
+    eslint:
+      root: frontend/
+      glob: "*.{js,jsx,ts,tsx}"
+      run: pnpm exec eslint --fix {staged_files}
+      stage_fixed: true
+    prettier:
+      root: frontend/
+      glob: "*.{js,jsx,ts,tsx,css,md,json}"
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      root: frontend/
+      run: pnpm exec commitlint --edit {1}
+
+pre-push:
+  parallel: true
+  commands:
+    backend-tests:
+      root: backend/
+      run: bin/rspec --fail-fast
+    frontend-tests:
+      root: frontend/
+      run: pnpm test --run
+    packwerk:
+      root: backend/
+      run: bin/packwerk check

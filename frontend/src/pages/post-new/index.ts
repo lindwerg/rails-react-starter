@@ -1,0 +1,1 @@
+export { PostNewPage } from './PostNewPage';

@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require_relative "../config/boot"
+require "packwerk"
+require "packwerk/cli"
+
+Packwerk::Cli.new.run(ARGV)

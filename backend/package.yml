@@ -1,0 +1,13 @@
+# Root package — minimal config root.
+enforce_dependencies: true
+enforce_privacy: true
+enforce_layers: true
+layer: orchestrator
+
+dependencies:
+  - packs/api
+  - packs/auth
+  - packs/users
+  - packs/posts
+  - packs/platform
+  - packs/shared

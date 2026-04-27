@@ -1,0 +1,12 @@
+node_modules
+dist
+.vite
+coverage
+playwright-report
+test-results
+storybook-static
+.eslintcache
+*.local
+.env
+.DS_Store
+public/mockServiceWorker.js
