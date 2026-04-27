@@ -11,9 +11,19 @@ const FSD_LAYERS = ['app', 'pages', 'widgets', 'features', 'entities', 'shared']
 
 export default tseslint.config(
   { ignores: ['dist', 'storybook-static', 'node_modules', 'src/shared/api/types.gen.ts'] },
+  // Node-side configs (vite, vitest) — they live in tsconfig.node.json.
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
+    files: ['vite.config.ts', 'vitest.config.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+      parserOptions: { project: ['./tsconfig.node.json'] },
+    },
+  },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.browser,
@@ -46,12 +56,12 @@ export default tseslint.config(
         {
           default: 'disallow',
           rules: [
-            { from: 'app',      allow: ['pages', 'widgets', 'features', 'entities', 'shared'] },
-            { from: 'pages',    allow: ['widgets', 'features', 'entities', 'shared'] },
-            { from: 'widgets',  allow: ['features', 'entities', 'shared'] },
+            { from: 'app', allow: ['pages', 'widgets', 'features', 'entities', 'shared'] },
+            { from: 'pages', allow: ['widgets', 'features', 'entities', 'shared'] },
+            { from: 'widgets', allow: ['features', 'entities', 'shared'] },
             { from: 'features', allow: ['entities', 'shared'] },
             { from: 'entities', allow: ['shared'] },
-            { from: 'shared',   allow: ['shared'] },
+            { from: 'shared', allow: ['shared'] },
           ],
         },
       ],
