@@ -5,7 +5,7 @@
 .PHONY: help bootstrap first-run setup setup-tools setup-backend setup-frontend \
         dev dev-services test test-backend test-frontend e2e \
         lint lint-backend lint-frontend lint-fix \
-        typecheck security typegen pack-check check-all \
+        typecheck security typegen pack-check check-all doctor \
         log clean reset
 
 SHELL := /bin/bash
@@ -100,6 +100,10 @@ security: ## Brakeman + bundler-audit + npm audit
 # ---------- everything (use before claiming "done") ----------
 check-all: test lint typecheck security pack-check ## Run every quality gate sequentially
 	@echo "✅ All checks green."
+
+# ---------- doctor: diagnose broken-first-run pain ----------
+doctor: ## Diagnose mise/Docker/ports/env/hooks (run when something feels off)
+	@.claude/scripts/doctor.sh
 
 # ---------- types from OpenAPI ----------
 typegen: ## Regenerate frontend types from backend OpenAPI

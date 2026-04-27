@@ -80,10 +80,7 @@
       {
         "matcher": "*",
         "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f /tmp/claude-just-exited-plan-mode ]; then echo '📝 Reminder: run /new-log to record what you did, and update PROGRESS.md before ending. (CLAUDE.md §2.6)'; rm -f /tmp/claude-just-exited-plan-mode; fi"
-          }
+          { "type": "command", "command": ".claude/scripts/stop-check.sh" }
         ]
       }
     ]

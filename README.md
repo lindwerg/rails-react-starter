@@ -12,17 +12,18 @@ Production-ready monorepo template for any project on **Rails 8 (API) + React 19
 # 1. Clone and rename
 git clone <this-repo> myapp && cd myapp
 
-# 2. Install language runtimes (Ruby 3.3, Node 22) via mise
-mise install
+# 2. One-shot bootstrap — installs Ruby/Node, runs migrations, seeds, hooks
+./bootstrap.sh
 
-# 3. Install dependencies, prepare DB, install git hooks
-make setup
-
-# 4. Start everything (Postgres, Rails API, Vite frontend)
+# 3. Start everything (Postgres, Rails API, Vite frontend)
 make dev
 ```
 
 Open http://localhost:5173 — register, log in, create posts.
+
+**Stuck on the first run?** `make doctor` checks mise activation, Docker daemon, ports, env files, hooks — and prints the exact fix for each ✗. See also [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md).
+
+**Inside Claude Code:** start any session with `/go` — it reads the latest log + git state and routes you to the right next action.
 
 ---
 
