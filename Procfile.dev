@@ -1,3 +1,3 @@
-web:      cd backend && bin/rails server -p 3000
+web:      cd backend && bin/rails server -p ${BACKEND_PORT:-3000}
 worker:   cd backend && bin/rails solid_queue:start
-frontend: cd frontend && pnpm dev --host
+frontend: cd frontend && pnpm dev --host --port ${FRONTEND_PORT:-5173}

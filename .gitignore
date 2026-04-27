@@ -70,3 +70,8 @@ backend/config/master.key
 # Misc
 .cache/
 *.pid
+
+# Bootstrap runtime artifacts (auto-allocated per-machine)
+.ports.env
+.template-renamed
+docker-compose.override.yml
