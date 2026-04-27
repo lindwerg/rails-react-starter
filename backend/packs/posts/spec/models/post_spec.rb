@@ -16,7 +16,7 @@ RSpec.describe Post do
       published = create(:post)
       _draft = create(:post, :draft)
       _future = create(:post, :scheduled)
-      expect(Post.published).to contain_exactly(published)
+      expect(described_class.published).to contain_exactly(published)
     end
   end
 

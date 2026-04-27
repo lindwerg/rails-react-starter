@@ -25,7 +25,7 @@ RSpec.describe "Api::V1::Auth", type: :request do
   end
 
   describe "POST /api/v1/auth/sign_in" do
-    let!(:user) { create(:user, email: "alice@example.com", password: "password123") }
+    before { create(:user, email: "alice@example.com", password: "password123") }
 
     it "returns 201 and a token on success" do
       post "/api/v1/auth/sign_in", params: { email: "alice@example.com", password: "password123" }

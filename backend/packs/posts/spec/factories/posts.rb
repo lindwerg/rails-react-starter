@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :post do
-    association :author, factory: :user
+    author factory: %i[user]
     title { Faker::Book.title }
     body  { Faker::Lorem.paragraph(sentence_count: 3) }
     published_at { Time.current }

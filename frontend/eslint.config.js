@@ -10,7 +10,17 @@ import storybook from 'eslint-plugin-storybook';
 const FSD_LAYERS = ['app', 'pages', 'widgets', 'features', 'entities', 'shared'];
 
 export default tseslint.config(
-  { ignores: ['dist', 'storybook-static', 'node_modules', 'src/shared/api/types.gen.ts'] },
+  {
+    ignores: [
+      'dist',
+      'storybook-static',
+      'node_modules',
+      'src/shared/api/types.gen.ts',
+      // not in any tsconfig project — Storybook config and worker shims
+      '.storybook/**',
+      'public/mockServiceWorker.js',
+    ],
+  },
   // Node-side configs (vite, vitest) — they live in tsconfig.node.json.
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
