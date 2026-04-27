@@ -32,10 +32,11 @@ pre-push:
   commands:
     backend-tests:
       root: backend/
-      run: mise x -- bin/rspec --fail-fast
+      # Source ../.env so RSpec gets POSTGRES_PORT (Docker maps to 5433+ by default).
+      run: bash -c '[ -f ../.env ] && set -a && source ../.env && set +a; mise x -- bin/rspec --fail-fast'
     frontend-tests:
       root: frontend/
-      run: mise x -- pnpm test --run
+      run: mise x -- pnpm exec vitest run
     typecheck:
       root: frontend/
       run: mise x -- pnpm typecheck

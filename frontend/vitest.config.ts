@@ -8,6 +8,8 @@ export default mergeConfig(
       globals: true,
       environment: 'jsdom',
       setupFiles: ['./vitest.setup.ts'],
+      // e2e specs run under Playwright, not Vitest.
+      exclude: ['node_modules', 'dist', 'e2e/**', 'playwright-report/**', 'test-results/**'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json-summary', 'html'],

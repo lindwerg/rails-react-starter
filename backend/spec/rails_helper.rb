@@ -21,6 +21,10 @@ end
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
+# Load factories from each pack's spec/factories/.
+FactoryBot.definition_file_paths += Dir[Rails.root.join("packs/*/spec/factories")]
+FactoryBot.find_definitions
+
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
@@ -28,7 +32,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
-  config.fixture_paths = [Rails.root.join("spec/fixtures")]
+  config.fixture_paths = [ Rails.root.join("spec/fixtures") ]
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!

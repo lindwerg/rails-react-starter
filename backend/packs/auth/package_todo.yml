@@ -1,0 +1,16 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'packs/auth' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+packs/users:
+  "::User":
+    violations:
+    - privacy
+    files:
+    - packs/auth/app/public/auth/sign_in.rb
+    - packs/auth/app/public/auth/sign_up.rb
+    - packs/auth/spec/services/auth/sign_up_spec.rb

@@ -1,0 +1,29 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'packs/api' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+".":
+  "::ApplicationController":
+    violations:
+    - dependency
+    - privacy
+    files:
+    - packs/api/app/controllers/api/base_controller.rb
+packs/posts:
+  "::Post":
+    violations:
+    - privacy
+    files:
+    - packs/api/app/controllers/api/v1/posts_controller.rb
+    - packs/api/spec/requests/api/v1/posts_spec.rb
+packs/users:
+  "::User":
+    violations:
+    - privacy
+    files:
+    - packs/api/app/controllers/api/v1/posts_controller.rb
+    - packs/api/spec/requests/api/v1/auth_spec.rb

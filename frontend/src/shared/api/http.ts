@@ -31,7 +31,7 @@ export async function toApiError(error: unknown): Promise<ApiError> {
     }
     return {
       status: error.response.status,
-      code: body.code,
+      ...(body.code !== undefined && { code: body.code }),
       message: body.error ?? error.message,
     };
   }

@@ -12,7 +12,7 @@ class User < ApplicationRecord
     length: { minimum: 8, maximum: 72 },
     if: -> { password.present? }
 
-  before_save { self.email = email.downcase.strip if email }
+  before_validation { self.email = email.downcase.strip if email }
 
   has_many :posts, foreign_key: :author_id, dependent: :destroy, inverse_of: :author
 end

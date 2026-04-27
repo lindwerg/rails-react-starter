@@ -74,7 +74,7 @@ test-backend: ## RSpec
 	cd backend && bin/rspec
 
 test-frontend: ## Vitest
-	cd frontend && pnpm test --run
+	cd frontend && pnpm exec vitest run
 
 e2e: ## Playwright end-to-end
 	cd frontend && pnpm exec playwright test

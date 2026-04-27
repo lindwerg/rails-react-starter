@@ -47,6 +47,7 @@ frontend/playwright-report/
 frontend/test-results/
 frontend/.eslintcache
 frontend/storybook-static/
+frontend/*.tsbuildinfo
 
 # Lockfile policy: keep them committed (do NOT ignore)
 # - backend/Gemfile.lock

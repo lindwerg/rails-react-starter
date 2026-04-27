@@ -1,0 +1,36 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# 'packs/posts' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+".":
+  "::ApplicationPolicy":
+    violations:
+    - dependency
+    - layer
+    - privacy
+    files:
+    - packs/posts/app/policies/post_policy.rb
+  "::ApplicationPolicy::Scope":
+    violations:
+    - dependency
+    - layer
+    - privacy
+    files:
+    - packs/posts/app/policies/post_policy.rb
+  "::ApplicationRecord":
+    violations:
+    - dependency
+    - layer
+    - privacy
+    files:
+    - packs/posts/app/models/post.rb
+packs/users:
+  "::User":
+    violations:
+    - privacy
+    files:
+    - packs/posts/app/models/post.rb

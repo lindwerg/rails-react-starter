@@ -1,0 +1,23 @@
+# This file contains a list of dependencies that are not part of the long term plan for the
+# '.' package.
+# We should generally work to reduce this list over time.
+#
+# You can regenerate this file using the following command:
+#
+# bin/packwerk update-todo
+---
+packs/posts:
+  "::Post":
+    violations:
+    - privacy
+    files:
+    - db/seeds.rb
+    - lib/tasks/dev.rake
+packs/users:
+  "::User":
+    violations:
+    - privacy
+    files:
+    - app/controllers/application_controller.rb
+    - db/seeds.rb
+    - lib/tasks/dev.rake

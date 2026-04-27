@@ -14,7 +14,7 @@ package_paths:
 require:
   - packwerk/privacy/checker
   - packwerk/visibility/checker
-  - packwerk/folder_visibility/checker
+  - packwerk/folder_privacy/checker
   - packwerk/layer/checker
 
 # 4 architectural layers (FSD-equivalent for Rails)
