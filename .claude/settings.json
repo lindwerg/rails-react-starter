@@ -9,6 +9,7 @@
       "Bash(bin/rspec *)",
       "Bash(bin/packwerk *)",
       "Bash(bin/rubocop *)",
+      "Bash(bin/dev)",
       "Bash(./bootstrap.sh)",
       "Bash(.claude/scripts/*)",
       "Bash(git status)",
@@ -41,6 +42,20 @@
         "matcher": "*",
         "hooks": [
           { "type": "command", "command": ".claude/scripts/check-mcp-needed.sh" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": ".claude/scripts/guard-write.sh" }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": ".claude/scripts/guard-bash.sh" }
         ]
       }
     ],
